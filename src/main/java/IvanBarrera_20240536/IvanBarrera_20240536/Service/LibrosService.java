@@ -1,11 +1,13 @@
 package IvanBarrera_20240536.IvanBarrera_20240536.Service;
 
 import IvanBarrera_20240536.IvanBarrera_20240536.Entities.LibrosEntity;
+import IvanBarrera_20240536.IvanBarrera_20240536.Exceptions.ExceptionLibroNoEncontradro;
+import IvanBarrera_20240536.IvanBarrera_20240536.Exceptions.ExceptionLibrosNoRegistrado;
 import IvanBarrera_20240536.IvanBarrera_20240536.Model.DTO.LibrosDTO;
 import IvanBarrera_20240536.IvanBarrera_20240536.Respositories.LibrosRepository;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +52,11 @@ public class LibrosService {
          return entity;
      }
 
+    /**
+     *
+     * @param librosEntity
+     * @return
+     */
      private LibrosDTO convertirADTO(LibrosEntity librosEntity){
          LibrosDTO dto = new LibrosDTO();
          dto.setTitulo(librosEntity.getTitulo());
@@ -60,8 +67,8 @@ public class LibrosService {
          return dto;
      }
 
-     public LibrosDTO actualizarLibro(Long id, LibrosDTO json){
-         LibrosRepository existente = repo.findAllById(id).orElseThrow(new ExceptionLibrosNoRegistrado("Libro no encontrado"));
+     public LibrosDTO actualizarLibro(Long id, LibrosDTO json) {
+         LibrosEntity existente = repo.findById(id).orElseThrow(new ExceptionLibroNoEncontradro("Libro no encontrado"));
          existente.setTitulo(json.getTitulo());
          existente.setIsbn(json.getIsbn());
          existente.setGenero(json.getGenero());
@@ -70,5 +77,18 @@ public class LibrosService {
          LibrosEntity libroActualizado = repo.save(existente);
          return convertirADTO(libroActualizado);
      }
-     public boolean
+
+    public boolean removerLibro(Long id) {
+         try{
+             LibrosEntity existente = repo.findById(id).orElse(null);
+             if (existente != null){
+                 repo.deleteById(id);
+                 return true;
+             } else{
+                 return false;
+             }
+         } catch (EmptyResultDataAccessException e){
+             throw new EmptyResultDataAccessException("No se encontro usario con id: " + id + " para eliminar.", 1);
+         }
+    }
 }
