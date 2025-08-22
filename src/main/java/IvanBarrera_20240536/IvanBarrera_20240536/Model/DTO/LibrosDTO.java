@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
+
 @Getter @Setter @ToString @EqualsAndHashCode
 public class LibrosDTO {
 
@@ -17,11 +19,11 @@ public class LibrosDTO {
     private String titulo;
     @NotBlank
     private String isbn;
-    @NotBlank
-    private String año_publicacion;
+
+    private Date año_publicacion;
     @NotBlank
     private String genero;
-    @NotBlank
+
     @Positive(message = "El id debe de ser positivo")
-    private String autor_id;
+    private Long autor_id;
 }

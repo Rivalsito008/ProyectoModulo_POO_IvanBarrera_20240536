@@ -17,7 +17,7 @@ public class LibrosEntity {
     @Column(name = "LIBRO_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_Libros")
     @SequenceGenerator(name = "seq_Libros", sequenceName = "seq_Libros", allocationSize = 1)
-    private Long libro_id;
+    private Long id;
 
     @Column(name = "TITULO")
     private String titulo;

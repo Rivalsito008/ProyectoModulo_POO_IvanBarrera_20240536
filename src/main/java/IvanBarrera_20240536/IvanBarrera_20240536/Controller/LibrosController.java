@@ -1,5 +1,6 @@
 package IvanBarrera_20240536.IvanBarrera_20240536.Controller;
 
+import IvanBarrera_20240536.IvanBarrera_20240536.Exceptions.ExceptionDatosDuplicados;
 import IvanBarrera_20240536.IvanBarrera_20240536.Model.DTO.LibrosDTO;
 import IvanBarrera_20240536.IvanBarrera_20240536.Service.LibrosService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,8 +8,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +51,24 @@ public class LibrosController {
                     "message", "Err0r no controlado al ingresar usuario",
                     "detail", e.getMessage()
             ));
+        }
+    }
+
+    //Metodo para actualizar datos
+    @PutMapping ("/editarLibro/{id}")
+    public ResponseEntity<?> modificarLibro(@PathVariable Long id, @Valid @RequestBody LibrosDTO json, BindingResult bindingResult){
+    if (bindingResult.hasErrors()){
+        Map<String, String> errores = new HashMap<>();
+        bindingResult.getFieldErrors().forEach(error -> errores.put(error.getField(), error.getDefaultMessage()));
+        return ResponseEntity.badRequest().body(errores);
+    }try{
+        LibrosDTO dto = service.actualizarLibro(id, json);
+        return ResponseEntity.ok(dto);
+        }catch (ExceptionDatosDuplicados e){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "Error", "Datos duplicados",
+                "Campo", e.getCampoDuplicado()
+        ));
         }
     }
 
