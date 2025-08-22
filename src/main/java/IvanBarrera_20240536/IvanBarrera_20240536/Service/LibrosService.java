@@ -26,15 +26,15 @@ public class LibrosService {
     }
 
     public LibrosDTO insertarLibros(LibrosDTO data) {
-        if (data == null || data.getTitulo() == null || data.getAutor_id().isEmpty()){
+        if (data == null || data.getTitulo() == null || data.getAutor_id() == null){
             throw new IllegalArgumentException("Titulo o autor no pueden ser nullos");
         }try{
             LibrosEntity entity = ConvertirAEntity(data);
             LibrosEntity libroGuardado = repo.save(entity);
             return convertirADTO(libroGuardado);
         } catch (Exception e){
-            log.error("Error al registrar el libro: " + e.getMessage();
-            throw new ExceptionLibrosNoRegistrado("Error al registrar el libro"));
+            log.error("Error al registrar el libro: " + e.getMessage());
+            throw new ExceptionLibrosNoRegistrado("Error al registrar el libro");
         }
     }
      /**
@@ -68,7 +68,7 @@ public class LibrosService {
      }
 
      public LibrosDTO actualizarLibro(Long id, LibrosDTO json) {
-         LibrosEntity existente = repo.findById(id).orElseThrow(new ExceptionLibroNoEncontradro("Libro no encontrado"));
+         LibrosEntity existente = repo.findById(id).orElseThrow(() ->new ExceptionLibroNoEncontradro("Libro no encontrado"));
          existente.setTitulo(json.getTitulo());
          existente.setIsbn(json.getIsbn());
          existente.setGenero(json.getGenero());
